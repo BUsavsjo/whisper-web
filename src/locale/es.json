@@ -42,7 +42,19 @@
         },
         "transcript": {
             "export": "Exportar",
-            "tokens_per_second": "tokens/segundo"
+            "tokens_per_second": "tokens/segundo",
+            "copilot_title": "📋 Copiar para Copilot",
+            "copilot_description": "Esta función divide tu transcripción en fragmentos adecuados para Copilot (máx. 15 000 caracteres por parte). Puedes copiar los fragmentos y pegarlos uno por uno en Copilot.",
+            "copilot_info": "Información de división",
+            "copilot_total_parts": "Número de partes",
+            "copilot_max_chars": "Máximo de caracteres por parte",
+            "copilot_preview": "Vista previa",
+            "copilot_part": "Parte",
+            "copilot_more_parts": "más partes...",
+            "copilot_copy": "Copiar al portapapeles",
+            "copilot_download": "Descargar como archivo",
+            "copilot_copied": "✓ ¡Copiado al portapapeles! Ahora puedes pegarlo en Copilot.",
+            "copilot_usage_tip": "💡 Consejo: Comienza con la parte 1 y deja que Copilot la procese. Luego copia la siguiente parte cuando estés listo."
         },
         "language_selector": {
             "title": "Idioma",

@@ -319,6 +319,7 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                 content={
                     <Trans i18nKey='manager.privacy_content'>
                         Privacy content
+                        <br />
                     </Trans>
                 }
             />
