@@ -4,7 +4,7 @@
             "title": "Whisper Web",
             "subtitle": "Transkribere tale direkte i nettleseren din!",
             "footer": "Transkriberingen utføres lokalt på enheten din. Ingen data sendes noe sted.",
-            "footer_credits": "Laget av <authorLink>Peter Wenström</authorLink> basert på en demo av <demoLink>Xenova</demoLink> ♥️"
+            "footer_credits": "Videreutviklet av <authorLink>Peter Wenström</authorLink> basert på <demoLink>Xenova</demoLink> ♥️"
         },
         "modal": {
             "close": "Lukk"

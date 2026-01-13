@@ -4,7 +4,7 @@
             "title": "Whisper Web",
             "subtitle": "¡Transcribe el habla directamente en tu navegador!",
             "footer": "La transcripción se realiza localmente en tu navegador. Tus datos se quedan privados.",
-            "footer_credits": "Creado por <authorLink>Peter Wenström</authorLink> basado en una demostración de <demoLink>Xenova</demoLink> ♥️"
+            "footer_credits": "Desarrollado por <authorLink>Peter Wenström</authorLink> basado en <demoLink>Xenova</demoLink> ♥️"
         },
         "modal": {
             "close": "Cerrar"

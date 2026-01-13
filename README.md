@@ -4,9 +4,13 @@ Whisper-web is a webapplication that allows you to transcribe sound files to tex
 
 ![A screenshot of the application](./screenshot.png)
 
-Created by [Peter Wenström](https://www.linkedin.com/in/peter-wenstr%C3%B6m-99515450/).
+## Credits
 
-This repository is a fork of [Xenova/whisper-web](https://github.com/xenova/whisper-web).
+Original project created by [Xenova](https://github.com/xenova/whisper-web) (2023)
+
+Swedish version by [Pierre Mesure](https://github.com/PierreMesure/whisper-web/tree/swedish) (2024)
+
+Further developed and maintained by [Peter Wenström](https://www.linkedin.com/in/peter-wenstr%C3%B6m-99515450/) (2026)
 
 Here are the main differences:
 
