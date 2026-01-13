@@ -132,7 +132,6 @@ export default function Transcript({ transcribedData }: Props) {
                 content={
                     <CopilotExportContent
                         transcribedData={transcribedData}
-                        onClose={() => setShowCopilotModal(false)}
                         onExport={exportCopilot}
                         selectedPromptId={selectedPromptId}
                         onPromptChange={setSelectedPromptId}
