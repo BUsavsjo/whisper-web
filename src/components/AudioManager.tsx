@@ -295,7 +295,7 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                         <a
                             className='underline'
                             target='_blank'
-                            href='https://github.com/PierreMesure/whisper-web'
+                            href='https://github.com/BUsavsjo/whisper-web'
                         >
                             Github
                         </a>

@@ -37,7 +37,7 @@ function App() {
                             authorLink: (
                                 <a
                                     className='underline'
-                                    href='https://github.com/PierreMesure/whisper-web'
+                                    href='https://github.com/BUsavsjo/whisper-web'
                                 />
                             ),
                             demoLink: (
@@ -48,6 +48,15 @@ function App() {
                             ),
                         }}
                     />
+                    <br />
+                    <a
+                        className='underline text-sm'
+                        href='https://www.linkedin.com/in/peter-wenstr%C3%B6m-99515450/'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                    >
+                        LinkedIn
+                    </a>
                 </footer>
             </div>
             <LanguageSelector

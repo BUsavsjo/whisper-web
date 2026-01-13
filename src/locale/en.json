@@ -4,7 +4,7 @@
             "title": "Whisper Web",
             "subtitle": "Transcribe speech directly in your browser!",
             "footer": "The transcription is performed locally on your device. Your data remains private.",
-            "footer_credits": "Created by <authorLink>Pierre Mesure</authorLink> based on a demo by <demoLink>Xenova</demoLink> ♥️"
+            "footer_credits": "Created by <authorLink>Peter Wenström</authorLink> based on a demo by <demoLink>Xenova</demoLink> ♥️"
         },
         "modal": {
             "close": "Close"

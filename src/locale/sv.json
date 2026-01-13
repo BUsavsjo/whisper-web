@@ -4,7 +4,7 @@
             "title": "Whisper Web",
             "subtitle": "Transkribera tal direkt i din webbläsare!",
             "footer": "Transkriberingen utförs lokalt på din enhet. Inga uppgifter skickas någonstans.",
-            "footer_credits": "Skapad av <authorLink>Pierre Mesure</authorLink> baserat på en demo av <demoLink>Xenova</demoLink> ♥️"
+            "footer_credits": "Skapad av <authorLink>Peter Wenström</authorLink> baserat på en demo av <demoLink>Xenova</demoLink> ♥️"
         },
         "modal": {
             "close": "Stäng"
