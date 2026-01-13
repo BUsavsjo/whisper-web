@@ -146,13 +146,11 @@ export default function Transcript({ transcribedData }: Props) {
 
 function CopilotExportContent({
     transcribedData,
-    onClose,
     onExport,
     selectedPromptId,
     onPromptChange,
 }: {
     transcribedData: TranscriberData | undefined;
-    onClose: () => void;
     onExport: () => void;
     selectedPromptId: string;
     onPromptChange: (promptId: string) => void;
