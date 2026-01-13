@@ -29,7 +29,7 @@
             "info_title": "Whisper-web",
             "info_content": "Whisper-web är en liten tjänst för att transkribera ljudtal till text.<1></1><1></1>Första gången du anger en ljudfil kommer en öppen AI-modell att laddas ner så transkriptionen kan ske lokalt i din webbläsare. På detta sätt lämnar din ljudfil aldrig din enhet. Det betyder också att transkriptionen kan bli långsam eller misslyckas om din dator/smartphone inte är tillräckligt kraftfull.<1></1><1></1>I inställningarna (nere till höger) kan du välja mellan olika modeller och olika kvantiseringsnivåer. En mindre modell med lägre kvantisering kommer att vara snabbare men göra fler språkmisstag. Som standard använder Whisper-web små modeller men du kan prova en större och se om det fungerar på din enhet.<1></1><1></1>För de flesta språk är det bäst att använda <4>OpenAI:s officiella modeller</4> (Multilingual) men för svenska eller norska rekommenderas särskilda versioner som har tränats specifikt för dem.<1></1><1></1>De svenska modellerna heter <8>KB-whisper</8> och har tränats av <12>Kungliga biblioteket</12> på ljud från riksdagsdebatter, SVT m.fl. De norska heter <16>nb-whisper</16> och har också tränats av landets <20>nationalbibliotek</20>.<1></1><1></1>Projektets källkod finns tillgänglig på <23>Github</23>. Du får gärna återanvända eller bidra till den.<1></1><1></1>Webbplatsen hostas på <26>statichost.eu</26>, en integritetsvänlig tjänst för statiska webbsidor.",
             "privacy_title": "🔐 Integritet och dataskydd",
-            "privacy_content": "Den här webbapplikationen är utformad med fokus på användarens integritet. All bearbetning av ljudfiler sker direkt i din webbläsare och lämnar inte din enhet. Ingen information lagras eller delas med tredje part.<1></1><1></1><strong>📋 GDPR – Vanliga frågor</strong><1></1><1></1><strong>❓ Skickas mina ljudfiler till någon server?</strong><1></1>Nej. All behandling sker lokalt på din enhet. Applikationen använder en AI-modell som körs i webbläsaren, utan att något skickas till externa servrar.<1></1><1></1><strong>❓ Lagrar applikationen några personuppgifter?</strong><1></1>Nej. Applikationen lagrar ingen information om användaren, ljudinspelningar eller transkriptioner – varken tillfälligt eller permanent.<1></1><1></1><strong>❓ Används cookies eller spårningsverktyg?</strong><1></1>Nej. Applikationen använder inte cookies, analysverktyg eller andra tekniker för att spåra användarbeteende.<1></1><1></1><strong>❓ Kan jag använda detta för att transkribera känsligt material?</strong><1></1>Det rekommenderas inte. Även om ingen data skickas vidare, sker behandlingen utanför ett kontrollerat IT-system. Därför bör tjänsten inte användas för sekretessbelagt eller känsligt material.<1></1><1></1><strong>❓ Vem ansvarar för tjänsten?</strong><1></1>Denna applikation bygger på öppen källkod och kan anpassas för olika verksamheter. Ansvar för användning, hantering av personuppgifter och eventuell anpassning åligger den som tillhandahåller tjänsten i aktuell kontext."
+            "privacy_content": "Den här webbapplikationen är utformad med fokus på användarens integritet. All bearbetning av ljudfiler sker direkt i din webbläsare och lämnar inte din enhet. Ingen information lagras eller delas med tredje part.<1></1><1></1><strong>📋 GDPR – Vanliga frågor</strong><1></1><1></1><strong>❓ Skickas mina ljudfiler till någon server?</strong><1></1><1></1>Nej. All behandling sker lokalt på din enhet. Applikationen använder en AI-modell som körs i webbläsaren, utan att något skickas till externa servrar.<1></1><1></1><strong>❓ Lagrar applikationen några personuppgifter?</strong><1></1><1></1>Nej. Applikationen lagrar ingen information om användaren, ljudinspelningar eller transkriptioner – varken tillfälligt eller permanent.<1></1><1></1><strong>❓ Används cookies eller spårningsverktyg?</strong><1></1><1></1>Nej. Applikationen använder inte cookies, analysverktyg eller andra tekniker för att spåra användarbeteende.<1></1><1></1><strong>❓ Kan jag använda detta för att transkribera känsligt material?</strong><1></1><1></1>Det rekommenderas inte. Även om ingen data skickas vidare, sker behandlingen utanför ett kontrollerat IT-system. Därför bör tjänsten inte användas för sekretessbelagt eller känsligt material.<1></1><1></1><strong>❓ Vem ansvarar för tjänsten?</strong><1></1><1></1>Denna applikation bygger på öppen källkod och kan anpassas för olika verksamheter. Ansvar för användning, hantering av personuppgifter och eventuell anpassning åligger den som tillhandahåller tjänsten i aktuell kontext."
         },
         "recorder": {
             "start_recording": "Starta inspelning",
@@ -42,7 +42,51 @@
         },
         "transcript": {
             "export": "Exportera",
-            "tokens_per_second": "tokens/sekund"
+            "tokens_per_second": "tokens/sekund",
+            "copilot_title": "📋 Kopiera för Copilot",
+            "copilot_description": "Denna funktion delar upp din transkription i delar som är lämpliga för Copilot (max 15 000 tecken per del). Du kan kopiera delarna och klistra in dem en i taget i Copilot.",
+            "copilot_info": "Delningsinformation",
+            "copilot_total_parts": "Antal delar",
+            "copilot_max_chars": "Max tecken per del",
+            "copilot_preview": "Förhandsvisning",
+            "copilot_part": "Del",
+            "copilot_more_parts": "fler delar...",
+            "copilot_copy": "Kopiera till urklipp",
+            "copilot_download": "Ladda ner som fil",
+            "copilot_copied": "✓ Kopierat till urklipp! Du kan nu klistra in i Copilot.",
+            "copilot_usage_tip": "💡 Tips: Börja med del 1 och låt Copilot bearbeta den. Kopiera sedan nästa del när du är redo.",
+            "prompt_template": "Välj promptmall",
+            "prompt_preview": "Prompt som kommer användas"
+        },
+        "prompts": {
+            "none": {
+                "name": "Ingen prompt",
+                "description": "Exportera endast transkriptionen"
+            },
+            "structured_reflection": {
+                "name": "📝 Strukturerad reflektion",
+                "description": "För fri talad input som ska struktureras"
+            },
+            "student_reflection": {
+                "name": "👥 Elevreflektion / Samtalskompass",
+                "description": "För elevsamtal och SKA-processer"
+            },
+            "summary": {
+                "name": "📄 Sammanfattning",
+                "description": "Skapa en kortfattad sammanfattning"
+            },
+            "notes": {
+                "name": "📋 Strukturerade anteckningar",
+                "description": "Omvandla till redigerade anteckningar"
+            },
+            "questions": {
+                "name": "❓ Diskussionsfrågor",
+                "description": "Generera diskussions- och reflektionsfrågor"
+            },
+            "keywords": {
+                "name": "🎯 Nyckelord och begrepp",
+                "description": "Lista och definiera viktiga begrepp"
+            }
         },
         "language_selector": {
             "title": "Språk",

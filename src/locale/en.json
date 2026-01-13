@@ -42,7 +42,19 @@
         },
         "transcript": {
             "export": "Export",
-            "tokens_per_second": "tokens/second"
+            "tokens_per_second": "tokens/second",
+            "copilot_title": "📋 Copy for Copilot",
+            "copilot_description": "This function splits your transcription into chunks suitable for Copilot (max 15,000 characters per part). You can copy the chunks and paste them one at a time into Copilot.",
+            "copilot_info": "Split Information",
+            "copilot_total_parts": "Number of parts",
+            "copilot_max_chars": "Max characters per part",
+            "copilot_preview": "Preview",
+            "copilot_part": "Part",
+            "copilot_more_parts": "more parts...",
+            "copilot_copy": "Copy to clipboard",
+            "copilot_download": "Download as file",
+            "copilot_copied": "✓ Copied to clipboard! You can now paste it in Copilot.",
+            "copilot_usage_tip": "💡 Tip: Start with part 1 and let Copilot process it. Then copy the next part when you're ready."
         },
         "language_selector": {
             "title": "Language",

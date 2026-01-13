@@ -42,7 +42,19 @@
         },
         "transcript": {
             "export": "Eksporter",
-            "tokens_per_second": "tokens/sekund"
+            "tokens_per_second": "tokens/sekund",
+            "copilot_title": "📋 Kopier for Copilot",
+            "copilot_description": "Denne funksjonen deler opp transkripsjonen din i deler som er egnet for Copilot (maks 15 000 tegn per del). Du kan kopiere delene og lim dem inn en om gangen i Copilot.",
+            "copilot_info": "Deleinformasjon",
+            "copilot_total_parts": "Antall deler",
+            "copilot_max_chars": "Maks tegn per del",
+            "copilot_preview": "Foreslått",
+            "copilot_part": "Del",
+            "copilot_more_parts": "flere deler...",
+            "copilot_copy": "Kopier til utklippstavlen",
+            "copilot_download": "Last ned som fil",
+            "copilot_copied": "✓ Kopiert til utklippstavlen! Du kan nå lime det inn i Copilot.",
+            "copilot_usage_tip": "💡 Tips: Start med del 1 og la Copilot behandle den. Kopier deretter neste del når du er klar."
         },
         "language_selector": {
             "title": "Språk",
