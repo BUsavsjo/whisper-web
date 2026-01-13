@@ -3,7 +3,7 @@ import { useRef, useEffect, useState } from "react";
 import { TranscriberData } from "../hooks/useTranscriber";
 import { formatAudioTimestamp, formatSrtTimeRange } from "../utils/AudioUtils";
 import { formatForCopilot, splitForCopilot } from "../utils/CopilotExport";
-import { PROMPT_TEMPLATES, formatTextWithPrompt } from "../utils/PromptTemplates";
+import { PROMPT_TEMPLATES } from "../utils/PromptTemplates";
 import Modal from "./modal/Modal";
 import { t } from "i18next";
 
@@ -146,7 +146,7 @@ export default function Transcript({ transcribedData }: Props) {
 
 function CopilotExportContent({
     transcribedData,
-    onClose: closeModal,
+    onClose,
     onExport,
     selectedPromptId,
     onPromptChange,
