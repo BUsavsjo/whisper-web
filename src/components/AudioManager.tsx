@@ -153,6 +153,9 @@ export function AudioManager(props: { transcriber: Transcriber }) {
     return (
         <>
             <div className='flex flex-col justify-center items-center rounded-lg bg-white shadow-xl shadow-black/5 ring-1 ring-slate-700/10'>
+                <div className='w-full px-4 pt-3 pb-1'>
+                    <h3 className='text-lg font-semibold text-gray-700'>{t("manager.audio_source")}</h3>
+                </div>
                 <div className='flex flex-row space-x-2 py-2 w-full px-2'>
                     <UrlTile
                         icon={<AnchorIcon />}

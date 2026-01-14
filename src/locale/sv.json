@@ -1,10 +1,10 @@
 {
     "translation": {
         "app": {
-            "title": "Whisper Web",
+            "title": "Säker transkribering – direkt i webbläsaren",
             "subtitle": "Transkribera tal direkt i din webbläsare!",
-            "footer": "Transkriberingen utförs lokalt på din enhet. Inga uppgifter skickas någonstans.",
-            "footer_credits": "Vidareutvecklat av <authorLink>Peter Wenström</authorLink> baserat på <demoLink>Xenova</demoLink> ♥️"
+            "footer": "All bearbetning sker lokalt i din webbläsare. Inget ljud eller text skickas vidare.",
+            "footer_credits": "Vidareutvecklat av <authorLink>Peter Wenström</authorLink> baserat på <demoLink>Xenova</demoLink>"
         },
         "modal": {
             "close": "Stäng"
@@ -16,10 +16,11 @@
             "select_task": "Välj uppgift.",
             "transcribe": "Transkribera",
             "translate": "Översätt (till engelska)",
-            "from_url": "Från URL",
+            "audio_source": "Ljudkälla",
+            "from_url": "Ljud från webbadress",
             "from_url_description": "Ange URL:en till ljudfilen du vill ladda.",
-            "from_file": "Från fil",
-            "record": "Spela in",
+            "from_file": "Ladda upp ljudfil",
+            "record": "Spela in ljud",
             "record_description": "Spela in ljud med din mikrofon",
             "submit": "Ladda",
             "settings": "Inställningar",
@@ -38,9 +39,15 @@
         "transcribe_button": {
             "loading_model": "Laddar modell...",
             "transcribing": "Transkriberar...",
-            "transcribe": "Transkribera ljud"
+            "transcribe": "Starta transkribering (lokalt)"
         },
         "transcript": {
+            "title": "Rå transkription (redigerbar)",
+            "workspace_title": "Gör texten användbar",
+            "export_title": "Exportera eller fortsätt i AI",
+            "timestamps_title": "Tidsstämplad transkription",
+            "copilot_prompt_title": "AI-stöd (kopiera till valfri språkmodell)",
+            "copy_result_title": "Kopiera resultat",
             "export": "Exportera",
             "tokens_per_second": "tokens/sekund",
             "copilot_title": "📋 Kopiera för Copilot",

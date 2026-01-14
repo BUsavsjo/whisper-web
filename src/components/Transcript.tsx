@@ -65,10 +65,10 @@ export default function Transcript({ transcribedData }: Props) {
     };
 
     const exportButtons = [
-        { name: "TXT", onClick: exportTXT },
-        { name: "JSON", onClick: exportJSON },
-        { name: "SRT", onClick: exportSRT },
-        { name: "Copilot", onClick: () => setShowCopilotModal(true) },
+        { name: "som text (TXT)", onClick: exportTXT },
+        { name: "strukturerad data (JSON)", onClick: exportJSON },
+        { name: "tidsstämplar (SRT)", onClick: exportSRT },
+        { name: "för Copilot / valfri AI", onClick: () => setShowCopilotModal(true) },
     ];
 
     const endOfMessagesRef = useRef<HTMLDivElement>(null);
@@ -160,7 +160,7 @@ export default function Transcript({ transcribedData }: Props) {
                 <div className='w-1/2 border-r border-gray-200 overflow-y-auto p-4 md:p-6 bg-white'>
                     <div className='flex flex-col gap-3 mb-4'>
                         <div className='flex items-center justify-between'>
-                            <h2 className='text-xl md:text-2xl font-bold text-gray-800'>Transkriberad text</h2>
+                            <h2 className='text-xl md:text-2xl font-bold text-gray-800'>{t("transcript.title")}</h2>
                             <button
                                 onClick={() => setShowTextColumn(false)}
                                 className='text-xs md:text-sm px-2 md:px-3 py-1 md:py-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50 text-gray-700'
@@ -211,7 +211,7 @@ export default function Transcript({ transcribedData }: Props) {
                                 className='w-full h-[300px] border border-gray-300 rounded-md p-3 text-sm text-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none overflow-y-scroll'
                             />
                             <div className='mt-4'>
-                                <h3 className='text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-700'>Infoga Copilot-prompt</h3>
+                                <h3 className='text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-700'>{t("transcript.copilot_prompt_title")}</h3>
                                 <div className='flex flex-wrap gap-1.5 md:gap-2'>
                                     {PROMPT_TEMPLATES.filter(t => t.id !== "none").map((template) => (
                                         <button
@@ -225,7 +225,7 @@ export default function Transcript({ transcribedData }: Props) {
                                 </div>
                             </div>
                             <div className='mt-4'>
-                                <h3 className='text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-700'>Kopiera text</h3>
+                                <h3 className='text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-700'>{t("transcript.copy_result_title")}</h3>
                                 <button
                                     onClick={copyEditedText}
                                     className='text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-xs md:text-sm px-2.5 md:px-4 py-1.5 md:py-2 text-center'
@@ -244,18 +244,18 @@ export default function Transcript({ transcribedData }: Props) {
                     {!showTextColumn && (
                         <button
                             onClick={() => setShowTextColumn(true)}
-                            title='Visa textkolumn'
+                            title='Visa skrivyta'
                             className='absolute top-4 right-4 text-sm px-3 py-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50 shadow-sm z-10'
                         >
-                            📄 Visa text
+                            📄 Skrivyta
                         </button>
                     )}
-                    <h2 className='text-2xl font-bold mb-6 text-gray-800'>Arbetsyta</h2>
+                    <h2 className='text-2xl font-bold mb-6 text-gray-800'>{t("transcript.workspace_title")}</h2>
                     
                     {/* Export buttons */}
                     {transcribedData && !transcribedData.isBusy && (
                         <div className='mb-6'>
-                            <h3 className='text-lg font-semibold mb-3 text-gray-700'>Exportera</h3>
+                            <h3 className='text-lg font-semibold mb-3 text-gray-700'>{t("transcript.export_title")}</h3>
                             <div className='flex flex-wrap gap-2'>
                                 {exportButtons.map((button, i) => (
                                     <button
@@ -272,7 +272,7 @@ export default function Transcript({ transcribedData }: Props) {
 
                     {/* Chunks with timestamps */}
                     <div className='mb-6'>
-                        <h3 className='text-lg font-semibold mb-3 text-gray-700'>Tidsstämplar</h3>
+                        <h3 className='text-lg font-semibold mb-3 text-gray-700'>{t("transcript.timestamps_title")}</h3>
                         <div className='space-y-2'>
                             {transcribedData?.chunks &&
                                 transcribedData.chunks.map((chunk, i) => (
@@ -330,7 +330,7 @@ export default function Transcript({ transcribedData }: Props) {
                         )}
 
                         <div className='mb-6'>
-                            <h3 className='text-base font-semibold mb-3 text-gray-700'>Tidsstämplar</h3>
+                            <h3 className='text-base font-semibold mb-3 text-gray-700'>{t("transcript.timestamps_title")}</h3>
                             <div className='space-y-2'>
                                 {transcribedData?.chunks &&
                                     transcribedData.chunks.map((chunk, i) => (
