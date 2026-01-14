@@ -1,4 +1,8 @@
 import { useRef, useEffect, useState } from "react";
+// Transcript component: presents a two-column desktop layout with
+// - Left: editable writing area (spell check, formatting helpers, prompt shortcuts)
+// - Right: live transcript chunks with timestamps and export tools
+// It also shows a small status indicator under the workspace title while transcribing.
 
 import { TranscriberData } from "../hooks/useTranscriber";
 import { formatAudioTimestamp, formatSrtTimeRange } from "../utils/AudioUtils";
@@ -64,6 +68,7 @@ export default function Transcript({ transcribedData }: Props) {
         saveBlob(blob, "transcript-copilot.txt");
     };
 
+    // Export actions for the processed transcript
     const exportButtons = [
         { name: "som text (TXT)", onClick: exportTXT },
         { name: "strukturerad data (JSON)", onClick: exportJSON },
@@ -71,12 +76,9 @@ export default function Transcript({ transcribedData }: Props) {
         { name: "för Copilot / valfri AI", onClick: () => setShowCopilotModal(true) },
     ];
 
-    const endOfMessagesRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        endOfMessagesRef.current?.scrollIntoView({ behavior: "auto" });
-    }, [transcribedData?.chunks]);
 
+    // Keep the editable text in sync with the latest transcript
     useEffect(() => {
         const chunks = transcribedData?.chunks ?? [];
         const text = chunks.map((chunk) => chunk.text).join("").trim();
@@ -86,6 +88,7 @@ export default function Transcript({ transcribedData }: Props) {
     const chunks = transcribedData?.chunks ?? [];
     const fullText = chunks.map((chunk) => chunk.text).join("").trim();
 
+    // Restore the editable area back to the latest full transcript
     const restoreToTranscript = () => {
         setEditedText(fullText);
     };
@@ -112,6 +115,7 @@ export default function Transcript({ transcribedData }: Props) {
         });
     };
 
+    // Formatting helper: wrap current selection with prefix/suffix (bold/italic)
     const wrapSelection = (prefix: string, suffix?: string) => {
         const ta = textareaRef.current;
         if (!ta) return;
@@ -131,6 +135,7 @@ export default function Transcript({ transcribedData }: Props) {
         });
     };
 
+    // Formatting helper: prefix selected lines (e.g., bullet list)
     const prefixLines = (prefix: string) => {
         const ta = textareaRef.current;
         if (!ta) return;
@@ -150,14 +155,15 @@ export default function Transcript({ transcribedData }: Props) {
     };
 
     return (
-        <div ref={divRef} className='w-full flex flex-col mt-2 h-full overflow-hidden'>
+        // Desktop: fixed-height layout with independent column scrolling to avoid page jumps
+        <div ref={divRef} className='w-full h-full min-h-0 flex flex-col overflow-hidden'>
             {/* Mobile: No tabs needed, just show workspace */}
 
             {/* Desktop: Side-by-side layout */}
-            <div className='hidden md:flex flex-1 overflow-hidden'>
+            <div className='hidden md:flex flex-1 overflow-hidden min-h-0'>
                 {/* Left column: Text */}
                 {showTextColumn && (
-                <div className='w-1/2 border-r border-gray-200 overflow-y-auto p-4 md:p-6 bg-white'>
+                <div className='w-1/2 border-r border-gray-200 overflow-y-auto p-4 md:p-6 bg-white h-full flex flex-col'>
                     <div className='flex flex-col gap-3 mb-4'>
                         <div className='flex items-center justify-between'>
                             <h2 className='text-xl md:text-2xl font-bold text-gray-800'>{t("transcript.title")}</h2>
@@ -168,6 +174,7 @@ export default function Transcript({ transcribedData }: Props) {
                                 Dölj
                             </button>
                         </div>
+                        {/* Writing toolbar: bold, italic, list, restore */}
                         <div className='flex flex-wrap items-center gap-1.5'>
                                 <button
                                     onClick={() => wrapSelection("**")}
@@ -199,7 +206,8 @@ export default function Transcript({ transcribedData }: Props) {
                                 </button>
                             </div>
                     </div>
-                    <div className='max-w-3xl mx-auto prose prose-sm'>
+                    {/* Spell-checked editable area */}
+                    <div className='max-w-3xl mx-auto prose prose-sm flex-1 flex flex-col'>
                         <>
                         <textarea
                                 value={editedText}
@@ -208,10 +216,11 @@ export default function Transcript({ transcribedData }: Props) {
                                 spellCheck={true}
                                 lang='sv'
                                 wrap='soft'
-                                className='w-full h-[300px] border border-gray-300 rounded-md p-3 text-sm text-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none overflow-y-scroll'
+                                className='w-full flex-1 min-h-[300px] border border-gray-300 rounded-md p-3 text-sm text-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none overflow-y-scroll'
                             />
                             <div className='mt-4'>
                                 <h3 className='text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-700'>{t("transcript.copilot_prompt_title")}</h3>
+                                {/* Prompt shortcut buttons: insert guidance before text */}
                                 <div className='flex flex-wrap gap-1.5 md:gap-2'>
                                     {PROMPT_TEMPLATES.filter(t => t.id !== "none").map((template) => (
                                         <button
@@ -235,12 +244,12 @@ export default function Transcript({ transcribedData }: Props) {
                             </div>
                             </>
                     </div>
-                    <div ref={endOfMessagesRef} />
                 </div>
                 )}
 
                 {/* Right column: Workspace */}
-                <div className={`${showTextColumn ? 'w-1/2' : 'w-full'} overflow-y-auto p-6 bg-gray-50 relative`}>
+                {/* Right column: live transcript chunks, export, stats */}
+                <div className={`${showTextColumn ? 'w-1/2' : 'w-full'} overflow-y-auto p-6 bg-gray-50 relative h-full min-h-0`}>
                     {!showTextColumn && (
                         <button
                             onClick={() => setShowTextColumn(true)}
@@ -250,7 +259,30 @@ export default function Transcript({ transcribedData }: Props) {
                             📄 Skrivyta
                         </button>
                     )}
-                    <h2 className='text-2xl font-bold mb-6 text-gray-800'>{t("transcript.workspace_title")}</h2>
+                    {/* Workspace title + status indicator (busy/ready) */}
+                    <div className='mb-6'>
+                        <h2 className='text-2xl font-bold text-gray-800'>{t("transcript.workspace_title")}</h2>
+                        {/* Status indicator */}
+                        {transcribedData && (
+                            <div className='mt-2 flex items-center gap-2'>
+                                {transcribedData.isBusy ? (
+                                    <>
+                                        <div className='w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin'></div>
+                                        <span className='text-sm text-blue-600 font-medium'>Transkriberar...</span>
+                                    </>
+                                ) : transcribedData.chunks && transcribedData.chunks.length > 0 ? (
+                                    <>
+                                        <div className='w-4 h-4 bg-green-500 rounded-full flex items-center justify-center'>
+                                            <svg className='w-3 h-3 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={3} d='M5 13l4 4L19 7' />
+                                            </svg>
+                                        </div>
+                                        <span className='text-sm text-green-600 font-medium'>Klar!</span>
+                                    </>
+                                ) : null}
+                            </div>
+                        )}
+                    </div>
                     
                     {/* Export buttons */}
                     {transcribedData && !transcribedData.isBusy && (
@@ -308,7 +340,7 @@ export default function Transcript({ transcribedData }: Props) {
             </div>
 
             {/* Mobile: Workspace only */}
-            <div className='md:hidden flex-1 overflow-y-auto'>
+            <div className='md:hidden flex-1 overflow-y-auto min-h-0'>
                 <div className='p-4 bg-gray-50'>
                     <h2 className='text-xl font-bold mb-4 text-gray-800'>Arbetsyta</h2>
 

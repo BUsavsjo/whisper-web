@@ -22,6 +22,11 @@ Here are the main differences:
 - Available as a progressive web app (so usable offline if added to your homescreen)
 - Transcription is rendered continuously and not at the end
 - Export to SRT
+- Two-column desktop layout with writing area
+- Stable scrolling (columns scroll independently, page doesn't jump)
+- Spell checking enabled in writing area
+- Prompt shortcut buttons to insert guidance quickly
+- Status indicator under "Make the text useful" (busy/ready)
 - Choose between a larger range of models (for example Swedish and Norwegian finetunes from the countries' national libraries)
 - Choose your own quantization level for the model
 - Clear cache with a button
@@ -51,3 +56,16 @@ A version of the website with Swedish as default language is still available at 
     ```
 
 3. Open the link (e.g., [http://localhost:5173/](http://localhost:5173/)) in your browser.
+
+## New UI Features
+
+- Writing area with formatting helpers: bold, italic, bullet list, and quick reset to latest transcript.
+- Spell check (`sv`) enabled in the writing area to help correct typos.
+- Prompt shortcuts: insert predefined guidance blocks to prepare text for Copilot or other LLMs.
+- Export tools: TXT, JSON (chunks), SRT and Copilot-ready text.
+- Status indicator below the workspace title shows "Transkriberar..." while busy and "Klar!" when done.
+
+## Tips
+
+- On desktop, you can hide/show the writing area to focus on the transcript.
+- Columns have independent scroll; the page height remains steady during transcription.

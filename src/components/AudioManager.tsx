@@ -318,6 +318,7 @@ export function AudioManager(props: { transcriber: Transcriber }) {
             <InfoTile
                 className='fixed bottom-4 left-4'
                 icon={<ShieldIcon />}
+                text={t("manager.privacy_link")}
                 title={t("manager.privacy_title")}
                 content={
                     <Trans i18nKey='manager.privacy_content'>
@@ -337,6 +338,7 @@ export function AudioManager(props: { transcriber: Transcriber }) {
 
 function InfoTile(props: {
     icon: JSX.Element;
+    text?: string;
     className?: string;
     title: string;
     content: string | JSX.Element;
@@ -353,7 +355,7 @@ function InfoTile(props: {
 
     return (
         <div className={props.className}>
-            <Tile icon={props.icon} onClick={onClick} />
+            <Tile icon={props.icon} text={props.text} onClick={onClick} />
             <Modal
                 show={showModal}
                 submitEnabled={false}
