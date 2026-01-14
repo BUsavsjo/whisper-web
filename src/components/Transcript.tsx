@@ -222,15 +222,23 @@ export default function Transcript({ transcribedData }: Props) {
                                 <h3 className='text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-700'>{t("transcript.copilot_prompt_title")}</h3>
                                 {/* Prompt shortcut buttons: insert guidance before text */}
                                 <div className='flex flex-wrap gap-1.5 md:gap-2'>
-                                    {PROMPT_TEMPLATES.filter(t => t.id !== "none").map((template) => (
-                                        <button
-                                            key={template.id}
-                                            onClick={() => insertPrompt(template.id)}
-                                            className='text-white bg-purple-500 hover:bg-purple-600 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-xs md:text-sm px-2.5 md:px-4 py-1.5 md:py-2'
-                                        >
-                                            ➕ {template.name}
-                                        </button>
-                                    ))}
+                                    {PROMPT_TEMPLATES.filter(t => t.id !== "none").map((template) => {
+                                        const busy = !!transcribedData?.isBusy;
+                                        const baseClasses = 'font-medium rounded-lg text-xs md:text-sm px-2.5 md:px-4 py-1.5 md:py-2';
+                                        const enabledClasses = 'text-white bg-purple-500 hover:bg-purple-600 focus:ring-4 focus:ring-purple-300';
+                                        const disabledClasses = 'text-gray-400 bg-gray-200 cursor-not-allowed';
+                                        return (
+                                            <button
+                                                key={template.id}
+                                                onClick={() => insertPrompt(template.id)}
+                                                disabled={busy}
+                                                title={busy ? 'Transkribering pågår – knappen är avstängd' : template.name}
+                                                className={`${baseClasses} ${busy ? disabledClasses : enabledClasses}`}
+                                            >
+                                                ➕ {template.name}
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
                             <div className='mt-4'>
