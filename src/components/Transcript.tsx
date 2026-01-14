@@ -1,4 +1,8 @@
 import { useRef, useEffect, useState } from "react";
+// Transcript component: presents a two-column desktop layout with
+// - Left: editable writing area (spell check, formatting helpers, prompt shortcuts)
+// - Right: live transcript chunks with timestamps and export tools
+// It also shows a small status indicator under the workspace title while transcribing.
 
 import { TranscriberData } from "../hooks/useTranscriber";
 import { formatAudioTimestamp, formatSrtTimeRange } from "../utils/AudioUtils";
@@ -13,8 +17,11 @@ interface Props {
 
 export default function Transcript({ transcribedData }: Props) {
     const divRef = useRef<HTMLDivElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [showCopilotModal, setShowCopilotModal] = useState(false);
     const [selectedPromptId, setSelectedPromptId] = useState("none");
+    const [editedText, setEditedText] = useState("");
+    const [showTextColumn, setShowTextColumn] = useState(true);
 
     const saveBlob = (blob: Blob, filename: string) => {
         const url = URL.createObjectURL(blob);
@@ -25,13 +32,8 @@ export default function Transcript({ transcribedData }: Props) {
         URL.revokeObjectURL(url);
     };
     const exportTXT = () => {
-        const chunks = transcribedData?.chunks ?? [];
-        const text = chunks
-            .map((chunk) => chunk.text)
-            .join("")
-            .trim();
-
-        const blob = new Blob([text], { type: "text/plain" });
+        const textToExport = (editedText || fullText).trim();
+        const blob = new Blob([textToExport], { type: "text/plain" });
         saveBlob(blob, "transcript.txt");
     };
     const exportJSON = () => {
@@ -58,12 +60,7 @@ export default function Transcript({ transcribedData }: Props) {
     };
 
     const exportCopilot = () => {
-        const chunks = transcribedData?.chunks ?? [];
-        const text = chunks
-            .map((chunk) => chunk.text)
-            .join("")
-            .trim();
-        
+        const text = (editedText || fullText).trim();
         const template = PROMPT_TEMPLATES.find(t => t.id === selectedPromptId);
         const prompt = template && template.id !== "none" ? template.prompt : undefined;
         const copilotText = formatForCopilot(text, prompt);
@@ -71,59 +68,340 @@ export default function Transcript({ transcribedData }: Props) {
         saveBlob(blob, "transcript-copilot.txt");
     };
 
+    // Export actions for the processed transcript
     const exportButtons = [
-        { name: "TXT", onClick: exportTXT },
-        { name: "JSON", onClick: exportJSON },
-        { name: "SRT", onClick: exportSRT },
-        { name: "Copilot", onClick: () => setShowCopilotModal(true) },
+        { name: "som text (TXT)", onClick: exportTXT },
+        { name: "strukturerad data (JSON)", onClick: exportJSON },
+        { name: "tidsstämplar (SRT)", onClick: exportSRT },
+        { name: "för Copilot / valfri AI", onClick: () => setShowCopilotModal(true) },
     ];
 
-    const endOfMessagesRef = useRef<HTMLDivElement>(null);
 
+
+    // Keep the editable text in sync with the latest transcript
     useEffect(() => {
-        endOfMessagesRef.current?.scrollIntoView({ behavior: "auto" });
+        const chunks = transcribedData?.chunks ?? [];
+        const text = chunks.map((chunk) => chunk.text).join("").trim();
+        setEditedText(text);
     }, [transcribedData?.chunks]);
 
+    const chunks = transcribedData?.chunks ?? [];
+    const fullText = chunks.map((chunk) => chunk.text).join("").trim();
+
+    // Restore the editable area back to the latest full transcript
+    const restoreToTranscript = () => {
+        setEditedText(fullText);
+    };
+
+    const insertPrompt = (templateId: string) => {
+        const template = PROMPT_TEMPLATES.find(t => t.id === templateId);
+        if (!template || template.id === "none") return;
+        
+        const promptText = template.prompt + "\n\n";
+        setEditedText(promptText + editedText);
+        
+        // Focus textarea after insertion
+        requestAnimationFrame(() => {
+            textareaRef.current?.focus();
+        });
+    };
+
+    const copyEditedText = () => {
+        const textToCopy = editedText.trim();
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            alert('Text kopierad till urklipp!');
+        }).catch(err => {
+            console.error('Kunde inte kopiera text:', err);
+        });
+    };
+
+    // Formatting helper: wrap current selection with prefix/suffix (bold/italic)
+    const wrapSelection = (prefix: string, suffix?: string) => {
+        const ta = textareaRef.current;
+        if (!ta) return;
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const sfx = suffix ?? prefix;
+        const before = editedText.slice(0, start);
+        const sel = editedText.slice(start, end);
+        const after = editedText.slice(end);
+        const next = `${before}${prefix}${sel}${sfx}${after}`;
+        setEditedText(next);
+        // restore selection around original selection including wrappers
+        requestAnimationFrame(() => {
+            const pos = start + prefix.length + sel.length + sfx.length;
+            ta.focus();
+            ta.setSelectionRange(pos, pos);
+        });
+    };
+
+    // Formatting helper: prefix selected lines (e.g., bullet list)
+    const prefixLines = (prefix: string) => {
+        const ta = textareaRef.current;
+        if (!ta) return;
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        // Expand to full lines
+        const beforeText = editedText.slice(0, start);
+        const lineStart = beforeText.lastIndexOf("\n") + 1; // -1 => 0
+        const pre = editedText.slice(0, lineStart);
+        const middle = editedText.slice(lineStart, end).split("\n").map(l => (l ? `${prefix}${l}` : `${prefix}`)).join("\n");
+        const post = editedText.slice(end);
+        const next = `${pre}${middle}${post}`;
+        setEditedText(next);
+        requestAnimationFrame(() => {
+            ta.focus();
+        });
+    };
+
     return (
-        <div
-            ref={divRef}
-            className='w-full flex flex-col mt-2 p-4 overflow-y-auto'
-        >
-            {transcribedData?.chunks &&
-                transcribedData.chunks.map((chunk, i) => (
-                    <div
-                        key={`${i}-${chunk.text}`}
-                        className={`w-full flex flex-row mb-2 ${transcribedData?.isBusy ? "bg-gray-100" : "bg-white"} rounded-lg p-4 shadow-xl shadow-black/5 ring-1 ring-slate-700/10`}
-                    >
-                        <div className='mr-5'>
-                            {formatAudioTimestamp(chunk.timestamp[0])}
+        // Desktop: fixed-height layout with independent column scrolling to avoid page jumps
+        <div ref={divRef} className='w-full h-full min-h-0 flex flex-col overflow-hidden'>
+            {/* Mobile: No tabs needed, just show workspace */}
+
+            {/* Desktop: Side-by-side layout */}
+            <div className='hidden md:flex flex-1 overflow-hidden min-h-0'>
+                {/* Left column: Text */}
+                {showTextColumn && (
+                <div className='w-1/2 border-r border-gray-200 overflow-y-auto p-4 md:p-6 bg-white h-full flex flex-col'>
+                    <div className='flex flex-col gap-3 mb-4'>
+                        <div className='flex items-center justify-between'>
+                            <h2 className='text-xl md:text-2xl font-bold text-gray-800'>{t("transcript.title")}</h2>
+                            <button
+                                onClick={() => setShowTextColumn(false)}
+                                className='text-xs md:text-sm px-2 md:px-3 py-1 md:py-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50 text-gray-700'
+                            >
+                                Dölj
+                            </button>
                         </div>
-                        {chunk.text}
+                        {/* Writing toolbar: bold, italic, list, restore */}
+                        <div className='flex flex-wrap items-center gap-1.5'>
+                                <button
+                                    onClick={() => wrapSelection("**")}
+                                    title='Fetstil'
+                                    className='text-xs md:text-sm px-2 py-1 rounded border border-gray-300 bg-white hover:bg-gray-50'
+                                >
+                                    B
+                                </button>
+                                <button
+                                    onClick={() => wrapSelection("*")}
+                                    title='Kursiv'
+                                    className='text-xs md:text-sm px-2 py-1 rounded border border-gray-300 bg-white hover:bg-gray-50'
+                                >
+                                    I
+                                </button>
+                                <button
+                                    onClick={() => prefixLines("• ")}
+                                    title='Punktlista'
+                                    className='text-xs md:text-sm px-2 py-1 rounded border border-gray-300 bg-white hover:bg-gray-50'
+                                >
+                                    •
+                                </button>
+                                <button
+                                    onClick={restoreToTranscript}
+                                    title='Återställ till transkriberad text'
+                                    className='text-xs md:text-sm px-2 py-1 rounded border border-red-300 text-red-700 bg-white hover:bg-red-50'
+                                >
+                                    Återställ
+                                </button>
+                            </div>
                     </div>
-                ))}
-            {transcribedData && !transcribedData.isBusy && (
-                <div className='w-full text-center'>
-                    {exportButtons.map((button, i) => (
-                        <button
-                            key={i}
-                            onClick={button.onClick}
-                            className='text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center mr-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 inline-flex items-center'
-                        >
-                            {t("transcript.export")} {button.name}
-                        </button>
-                    ))}
+                    {/* Spell-checked editable area */}
+                    <div className='max-w-3xl mx-auto prose prose-sm flex-1 flex flex-col'>
+                        <>
+                        <textarea
+                                value={editedText}
+                                onChange={(e) => setEditedText(e.target.value)}
+                                ref={textareaRef}
+                                spellCheck={true}
+                                lang='sv'
+                                wrap='soft'
+                                className='w-full flex-1 min-h-[300px] border border-gray-300 rounded-md p-3 text-sm text-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none overflow-y-scroll'
+                            />
+                            <div className='mt-4'>
+                                <h3 className='text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-700'>{t("transcript.copilot_prompt_title")}</h3>
+                                {/* Prompt shortcut buttons: insert guidance before text */}
+                                <div className='flex flex-wrap gap-1.5 md:gap-2'>
+                                    {PROMPT_TEMPLATES.filter(t => t.id !== "none").map((template) => {
+                                        const busy = !!transcribedData?.isBusy;
+                                        const baseClasses = 'font-medium rounded-lg text-xs md:text-sm px-2.5 md:px-4 py-1.5 md:py-2';
+                                        const enabledClasses = 'text-white bg-purple-500 hover:bg-purple-600 focus:ring-4 focus:ring-purple-300';
+                                        const disabledClasses = 'text-gray-400 bg-gray-200 cursor-not-allowed';
+                                        return (
+                                            <button
+                                                key={template.id}
+                                                onClick={() => insertPrompt(template.id)}
+                                                disabled={busy}
+                                                title={busy ? 'Transkribering pågår – knappen är avstängd' : template.name}
+                                                className={`${baseClasses} ${busy ? disabledClasses : enabledClasses}`}
+                                            >
+                                                ➕ {template.name}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            <div className='mt-4'>
+                                <h3 className='text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-700'>{t("transcript.copy_result_title")}</h3>
+                                <button
+                                    onClick={copyEditedText}
+                                    className='text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-xs md:text-sm px-2.5 md:px-4 py-1.5 md:py-2 text-center'
+                                >
+                                    📋 Kopiera hela texten
+                                </button>
+                            </div>
+                            </>
+                    </div>
                 </div>
-            )}
-            {transcribedData?.tps && (
-                <p className='text-sm text-center mt-4'>
-                    <span className='font-semibold text-black'>
-                        {transcribedData?.tps.toFixed(2)}
-                    </span>{" "}
-                    <span className='text-gray-500'>
-                        {t("transcript.tokens_per_second")}
-                    </span>
-                </p>
-            )}
+                )}
+
+                {/* Right column: Workspace */}
+                {/* Right column: live transcript chunks, export, stats */}
+                <div className={`${showTextColumn ? 'w-1/2' : 'w-full'} overflow-y-auto p-6 bg-gray-50 relative h-full min-h-0`}>
+                    {!showTextColumn && (
+                        <button
+                            onClick={() => setShowTextColumn(true)}
+                            title='Visa skrivyta'
+                            className='absolute top-4 right-4 text-sm px-3 py-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50 shadow-sm z-10'
+                        >
+                            📄 Skrivyta
+                        </button>
+                    )}
+                    {/* Workspace title + status indicator (busy/ready) */}
+                    <div className='mb-6'>
+                        <h2 className='text-2xl font-bold text-gray-800'>{t("transcript.workspace_title")}</h2>
+                        {/* Status indicator */}
+                        {transcribedData && (
+                            <div className='mt-2 flex items-center gap-2'>
+                                {transcribedData.isBusy ? (
+                                    <>
+                                        <div className='w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin'></div>
+                                        <span className='text-sm text-blue-600 font-medium'>Transkriberar...</span>
+                                    </>
+                                ) : transcribedData.chunks && transcribedData.chunks.length > 0 ? (
+                                    <>
+                                        <div className='w-4 h-4 bg-green-500 rounded-full flex items-center justify-center'>
+                                            <svg className='w-3 h-3 text-white' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                                                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={3} d='M5 13l4 4L19 7' />
+                                            </svg>
+                                        </div>
+                                        <span className='text-sm text-green-600 font-medium'>Klar!</span>
+                                    </>
+                                ) : null}
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Export buttons */}
+                    {transcribedData && !transcribedData.isBusy && (
+                        <div className='mb-6'>
+                            <h3 className='text-lg font-semibold mb-3 text-gray-700'>{t("transcript.export_title")}</h3>
+                            <div className='flex flex-wrap gap-2'>
+                                {exportButtons.map((button, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={button.onClick}
+                                        className='text-white bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center'
+                                    >
+                                        {t("transcript.export")} {button.name}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Chunks with timestamps */}
+                    <div className='mb-6'>
+                        <h3 className='text-lg font-semibold mb-3 text-gray-700'>{t("transcript.timestamps_title")}</h3>
+                        <div className='space-y-2'>
+                            {transcribedData?.chunks &&
+                                transcribedData.chunks.map((chunk, i) => (
+                                    <div
+                                        key={`${i}-${chunk.text}`}
+                                        className={`flex flex-row p-3 rounded-lg ${
+                                            transcribedData?.isBusy ? "bg-gray-100" : "bg-white"
+                                        } shadow-sm ring-1 ring-slate-700/10`}
+                                    >
+                                        <div className='mr-4 text-sm font-mono text-gray-500 flex-shrink-0'>
+                                            {formatAudioTimestamp(chunk.timestamp[0])}
+                                        </div>
+                                        <div className='text-sm text-gray-700'>{chunk.text}</div>
+                                    </div>
+                                ))}
+                        </div>
+                    </div>
+
+                    {/* Performance stats */}
+                    {transcribedData?.tps && (
+                        <div className='mt-6 p-4 bg-blue-50 rounded-lg'>
+                            <p className='text-sm text-center'>
+                                <span className='font-semibold text-blue-900'>
+                                    {transcribedData?.tps.toFixed(2)}
+                                </span>{" "}
+                                <span className='text-blue-700'>
+                                    {t("transcript.tokens_per_second")}
+                                </span>
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Mobile: Workspace only */}
+            <div className='md:hidden flex-1 overflow-y-auto min-h-0'>
+                <div className='p-4 bg-gray-50'>
+                    <h2 className='text-xl font-bold mb-4 text-gray-800'>Arbetsyta</h2>
+
+                        {transcribedData && !transcribedData.isBusy && (
+                            <div className='mb-6'>
+                                <h3 className='text-base font-semibold mb-3 text-gray-700'>Exportera</h3>
+                                <div className='flex flex-wrap gap-2'>
+                                    {exportButtons.map((button, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={button.onClick}
+                                            className='text-white bg-green-500 hover:bg-green-600 font-medium rounded-lg text-sm px-4 py-2'
+                                        >
+                                            {t("transcript.export")} {button.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className='mb-6'>
+                            <h3 className='text-base font-semibold mb-3 text-gray-700'>{t("transcript.timestamps_title")}</h3>
+                            <div className='space-y-2'>
+                                {transcribedData?.chunks &&
+                                    transcribedData.chunks.map((chunk, i) => (
+                                        <div
+                                            key={`${i}-${chunk.text}`}
+                                            className='flex flex-col p-3 bg-white rounded-lg shadow-sm ring-1 ring-slate-700/10'
+                                        >
+                                            <div className='text-xs font-mono text-gray-500 mb-1'>
+                                                {formatAudioTimestamp(chunk.timestamp[0])}
+                                            </div>
+                                            <div className='text-sm text-gray-700'>{chunk.text}</div>
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+
+                        {transcribedData?.tps && (
+                            <div className='mt-6 p-4 bg-blue-50 rounded-lg'>
+                                <p className='text-sm text-center'>
+                                    <span className='font-semibold text-blue-900'>
+                                        {transcribedData?.tps.toFixed(2)}
+                                    </span>{" "}
+                                    <span className='text-blue-700'>
+                                        {t("transcript.tokens_per_second")}
+                                    </span>
+                                </p>
+                            </div>
+                        )}
+                </div>
+            </div>
+
             <Modal
                 show={showCopilotModal}
                 submitEnabled={false}
@@ -138,7 +416,6 @@ export default function Transcript({ transcribedData }: Props) {
                     />
                 }
             />
-            <div ref={endOfMessagesRef} />
         </div>
     );
 }

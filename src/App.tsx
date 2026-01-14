@@ -16,48 +16,56 @@ function App() {
 
     return (
         <>
-            <div className='flex flex-col justify-center items-center min-h-screen py-4'>
-                <div className='container flex flex-col justify-center items-center'>
-                    <h1 className='text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl text-center'>
+            <div className='flex flex-col items-center min-h-screen py-4'>
+                {/* Header + controls (non-growing) */}
+                <div className='container flex flex-col items-center flex-shrink-0'>
+                    <h1 className='text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl text-center'>
                         {t("app.title")}
                     </h1>
                     <h2 className='mt-3 mb-5 px-4 text-center text-1xl font-semibold tracking-tight text-slate-900 sm:text-2xl'>
                         {t("app.subtitle")}
                     </h2>
                     <AudioManager transcriber={transcriber} />
+                </div>
+
+                {/* Transcript workspace (grows and scrolls within viewport) */}
+                <div className='container flex-1 overflow-hidden'>
                     <Transcript transcribedData={transcriber.output} />
                 </div>
 
-                <footer className='text-center m-4'>
-                    <b>{t("app.footer")}</b>
-                    <br />
-                    <Trans
-                        i18nKey='app.footer_credits'
-                        components={{
-                            authorLink: (
-                                <a
-                                    className='underline'
-                                    href='https://github.com/BUsavsjo/whisper-web'
-                                />
-                            ),
-                            demoLink: (
-                                <a
-                                    className='underline'
-                                    href='https://github.com/Xenova/whisper-web'
-                                />
-                            ),
-                        }}
-                    />
-                    <br />
-                    <a
-                        className='underline text-sm'
-                        href='https://www.linkedin.com/in/peter-wenstr%C3%B6m-99515450/'
-                        target='_blank'
-                        rel='noopener noreferrer'
-                    >
-                        LinkedIn
-                    </a>
-                </footer>
+                {/* Footer (non-growing) */}
+                <div className='flex-shrink-0'>
+                    <footer className='text-center m-4'>
+                        <b>{t("app.footer")}</b>
+                        <br />
+                        <Trans
+                            i18nKey='app.footer_credits'
+                            components={{
+                                authorLink: (
+                                    <a
+                                        className='underline'
+                                        href='https://github.com/BUsavsjo/whisper-web'
+                                    />
+                                ),
+                                demoLink: (
+                                    <a
+                                        className='underline'
+                                        href='https://github.com/Xenova/whisper-web'
+                                    />
+                                ),
+                            }}
+                        />
+                        <br />
+                        <a
+                            className='underline text-sm'
+                            href='https://www.linkedin.com/in/peter-wenstr%C3%B6m-99515450/'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                        >
+                            LinkedIn
+                        </a>
+                    </footer>
+                </div>
             </div>
             <LanguageSelector
                 className='fixed bottom-4 right-16'
