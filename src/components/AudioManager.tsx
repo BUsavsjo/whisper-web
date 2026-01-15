@@ -315,8 +315,31 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                     </Trans>
                 }
             />
+            {/* Mobile: bottom action bar (GDPR + Settings) */}
+            <div className='md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur border-t border-gray-200 py-2'>
+                <div className='flex items-center justify-between px-6'>
+                    <InfoTile
+                        icon={<ShieldIcon />}
+                        text={t("manager.privacy_link")}
+                        title={t("manager.privacy_title")}
+                        content={
+                            <Trans i18nKey='manager.privacy_content'>
+                                Privacy content
+                                <br />
+                            </Trans>
+                        }
+                    />
+                    <SettingsTile
+                        text={t("manager.settings")}
+                        transcriber={props.transcriber}
+                        icon={<SettingsIcon />}
+                    />
+                </div>
+            </div>
+
+            {/* Desktop: fixed corner buttons */}
             <InfoTile
-                className='fixed bottom-4 left-4'
+                className='hidden md:block md:fixed md:bottom-4 md:left-4'
                 icon={<ShieldIcon />}
                 text={t("manager.privacy_link")}
                 title={t("manager.privacy_title")}
@@ -328,7 +351,7 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                 }
             />
             <SettingsTile
-                className='fixed bottom-4 right-4'
+                className='hidden md:block md:fixed md:bottom-4 md:right-4'
                 transcriber={props.transcriber}
                 icon={<SettingsIcon />}
             />
@@ -369,6 +392,7 @@ function InfoTile(props: {
 
 function SettingsTile(props: {
     icon: JSX.Element;
+    text?: string;
     className?: string;
     transcriber: Transcriber;
 }) {
@@ -388,7 +412,7 @@ function SettingsTile(props: {
 
     return (
         <div className={props.className}>
-            <Tile icon={props.icon} onClick={onClick} />
+            <Tile icon={props.icon} text={props.text} onClick={onClick} />
             <SettingsModal
                 show={showModal}
                 onSubmit={onSubmit}

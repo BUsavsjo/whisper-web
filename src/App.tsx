@@ -16,7 +16,7 @@ function App() {
 
     return (
         <>
-            <div className='flex flex-col items-center min-h-screen py-4'>
+            <div className='flex flex-col items-center min-h-screen py-4 pb-24 md:pb-10'>
                 {/* Header + controls (non-growing) */}
                 <div className='container flex flex-col items-center flex-shrink-0'>
                     <h1 className='text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl text-center'>
@@ -34,44 +34,50 @@ function App() {
                 </div>
 
                 {/* Footer (non-growing) */}
-                <div className='flex-shrink-0'>
-                    <footer className='text-center m-4'>
-                        <b>{t("app.footer")}</b>
-                        <br />
-                        <Trans
-                            i18nKey='app.footer_credits'
-                            components={{
-                                authorLink: (
-                                    <a
-                                        className='underline'
-                                        href='https://github.com/BUsavsjo/whisper-web'
-                                    />
-                                ),
-                                demoLink: (
-                                    <a
-                                        className='underline'
-                                        href='https://github.com/Xenova/whisper-web'
-                                    />
-                                ),
-                            }}
-                        />
-                        <br />
-                        <a
-                            className='underline text-sm'
-                            href='https://www.linkedin.com/in/peter-wenstr%C3%B6m-99515450/'
-                            target='_blank'
-                            rel='noopener noreferrer'
-                        >
-                            LinkedIn
-                        </a>
+                <div className='flex-shrink-0 mt-auto w-full bg-white border-t border-gray-200'>
+                    <footer className='text-center py-4 px-2 text-xs sm:text-sm mb-14 md:mb-0'>
+                        <div className='mb-2'>
+                            <b>{t("app.footer")}</b>
+                        </div>
+                        <div className='mb-2'>
+                            <Trans
+                                i18nKey='app.footer_credits'
+                                components={{
+                                    authorLink: (
+                                        <a
+                                            className='underline'
+                                            href='https://github.com/BUsavsjo/whisper-web'
+                                        />
+                                    ),
+                                    demoLink: (
+                                        <a
+                                            className='underline'
+                                            href='https://github.com/Xenova/whisper-web'
+                                        />
+                                    ),
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <a
+                                className='underline text-xs'
+                                href='https://www.linkedin.com/in/peter-wenstr%C3%B6m-99515450/'
+                                target='_blank'
+                                rel='noopener noreferrer'
+                            >
+                                LinkedIn
+                            </a>
+                        </div>
                     </footer>
                 </div>
             </div>
-            <LanguageSelector
-                className='fixed bottom-4 right-16'
-                currentLanguage={i18n.language}
-                onChangeLanguage={handleChangeLanguage}
-            />
+            <div className='fixed bottom-0 left-0 right-0 z-40 flex justify-center py-2 pointer-events-none md:inset-auto md:bottom-4 md:right-16 md:py-0 md:pointer-events-auto'>
+                <LanguageSelector
+                    className='pointer-events-auto'
+                    currentLanguage={i18n.language}
+                    onChangeLanguage={handleChangeLanguage}
+                />
+            </div>
         </>
     );
 }
