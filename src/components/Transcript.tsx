@@ -347,9 +347,10 @@ export default function Transcript({ transcribedData }: Props) {
                 </div>
             </div>
 
-            {/* Mobile: Workspace only */}
+            {/* Mobile: Workspace only - show when transcribing or has data */}
+            {(transcribedData?.chunks && transcribedData.chunks.length > 0) || transcribedData?.isBusy ? (
             <div className='md:hidden flex-1 overflow-y-auto min-h-0'>
-                <div className='p-4 bg-gray-50'>
+                <div className='p-4 pb-12 bg-gray-50'>
                     <h2 className='text-xl font-bold mb-4 text-gray-800'>Arbetsyta</h2>
 
                         {transcribedData && !transcribedData.isBusy && (
@@ -401,6 +402,7 @@ export default function Transcript({ transcribedData }: Props) {
                         )}
                 </div>
             </div>
+            ) : null}
 
             <Modal
                 show={showCopilotModal}
