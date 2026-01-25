@@ -79,9 +79,7 @@ const transcribe = async ({ audio, model, dtype, gpu, subtask, language }) => {
     // Storage for chunks to be processed. Initialise with an empty chunk.
     /** @type {{ text: string; offset: number, timestamp: [number, number | null] }[]} */
     const chunks = [];
-
-    // TODO: Storage for fully-processed and merged chunks
-    // let decoded_chunks = [];
+    const mergedChunks = [];
 
     const chunk_length_s = isDistilWhisper ? 20 : 30;
     const stride_length_s = isDistilWhisper ? 3 : 5;
@@ -112,11 +110,27 @@ const transcribe = async ({ audio, model, dtype, gpu, subtask, language }) => {
             // Append text to the last chunk
             chunks.at(-1).text += x;
 
+            // Send merged chunks to avoid showing duplicates
+            const displayChunks = [...mergedChunks];
+            const lastChunk = chunks.at(-1);
+            
+            // Add the current chunk being processed if it doesn't overlap
+            if (mergedChunks.length === 0) {
+                displayChunks.push(lastChunk);
+            } else {
+                const lastMerged = mergedChunks.at(-1);
+                const lastMergedEnd = lastMerged.timestamp[1] || lastMerged.timestamp[0];
+                
+                if (lastChunk.timestamp[0] >= lastMergedEnd) {
+                    displayChunks.push(lastChunk);
+                }
+            }
+
             self.postMessage({
                 status: "update",
                 data: {
                     text: "", // No need to send full text yet
-                    chunks,
+                    chunks: displayChunks,
                     tps,
                 },
             });
@@ -125,6 +139,33 @@ const transcribe = async ({ audio, model, dtype, gpu, subtask, language }) => {
             const current = chunks.at(-1);
             current.timestamp[1] = x + current.offset;
             current.finalised = true;
+            
+            // Merge finalized chunks, removing overlaps
+            if (mergedChunks.length === 0) {
+                // First chunk, add it directly
+                mergedChunks.push({ ...current });
+            } else {
+                const lastMerged = mergedChunks.at(-1);
+                const overlapStart = current.offset;
+                const lastMergedEnd = lastMerged.timestamp[1];
+                
+                // Only add the non-overlapping part
+                if (overlapStart < lastMergedEnd) {
+                    // There's an overlap, skip the overlapping part
+                    const nonOverlapStart = lastMergedEnd;
+                    if (nonOverlapStart < current.timestamp[1]) {
+                        mergedChunks.push({
+                            text: current.text,
+                            timestamp: [nonOverlapStart, current.timestamp[1]],
+                            finalised: true,
+                            offset: current.offset
+                        });
+                    }
+                } else {
+                    // No overlap, add the chunk as is
+                    mergedChunks.push({ ...current });
+                }
+            }
         },
         on_finalize: () => {
             start_time = null;
